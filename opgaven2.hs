@@ -1,5 +1,7 @@
 import FPPrac
 import Debug.Trace
+import Data.Char
+import Data.List
 
 
 --opgave 1
@@ -25,7 +27,7 @@ myzipWith f (x:xs) (y:ys)	= (f x y) : myzipWith f xs ys
 
 --opgave 2
 data Gender = Man | Vrouw | Schmuz
-	deriving Show
+	deriving (Show, Eq)
 
 --2a : type Persoon: ( String , Number, Gender, String)
 
@@ -63,3 +65,35 @@ incLeeftijdHigh inc xs	= map (incLeeftijdTuple inc ) xs
 
 --2d
 
+
+getMilfRec		:: [ Persoon ] -> [Persoon]
+getMilfRec	[]				=	[]
+getMilfRec	((n,l,g,s):xs) 	| g == Vrouw && 30 < l && l < 40	= (n,l,g,s) : (getMilfRec xs)
+							| otherwise		= getMilfRec xs 
+
+
+getMilfLijst	:: [ Persoon ] -> [Persoon]
+getMilfLijst	[]	= []
+getMilfLijst	xs	= [(n,l,g,s) | (n,l,g,s) <- xs, g == Vrouw && 30 < l && l < 40 ]
+
+isMilf			:: Persoon -> Bool
+isMilf	(n,l,g,s)	= g == Vrouw && 30 < l && l < 40
+
+getMilfHigh 	:: [ Persoon ] -> [Persoon]
+getMilfHigh 	[]	= []
+getMilfHigh	xs	= myfilter isMilf xs 
+
+--e
+getAgeByName :: String -> [Persoon] -> Number
+getAgeByName name []	= error "No people in database"
+getAgeByName name ((n,l,_,_):xs)	| (map toLower n) == (map toLower name) = l 
+									| otherwise = getAgeByName name xs
+
+--f 
+comperson :: Persoon -> Persoon -> Ordering
+comperson (_,l,_,_) (_,l',_,_)	=	compare l l'
+
+sorteerPersonen :: [Persoon ] -> [Persoon]
+sorteerPersonen []		= []
+--sorteerPersonen [x]	= [x]
+sorteerPersonen xs		= sortBy comperson xs 
