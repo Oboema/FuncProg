@@ -1,7 +1,7 @@
 import FPPrac
 import Debug.Trace
 import Data.Char
-import Data.List
+import qualified Data.List -- only using this for sortBy, gives namespace errors with fpprac for many other useful functions
 
 
 --opgave 1
@@ -95,5 +95,28 @@ comperson (_,l,_,_) (_,l',_,_)	=	compare l l'
 
 sorteerPersonen :: [Persoon ] -> [Persoon]
 sorteerPersonen []		= []
---sorteerPersonen [x]	= [x]
-sorteerPersonen xs		= sortBy comperson xs 
+sorteerPersonen xs		= Data.List.sortBy comperson xs 
+
+--3.a
+--zeef :: [Number] -> [Number]
+--zeef (x:xs)	= x 
+
+--3.b eigenlijk priemfac, superinefficient maarja
+delers' :: Number -> Number -> [Number]
+delers' k 1 = []
+delers' k n | (n `mod` k) == 0 	= k: delers' k (round $ n/k)
+			| otherwise 		= delers'	(k+1) n
+
+delers :: Number -> [Number]
+delers	n 	= delers' 2 n
+
+isPriem :: Number -> Bool
+isPriem n = length ( delers n)  == 1 
+
+--4a
+
+pyth :: Number -> [(Number, Number, Number)]
+--pyth' ::  [(Number,Number,Number)]
+
+pyth'	= [(a,b,c) | c <- [1..], b <-[1..c], a <- [1..b], a^2 + b^2 == c^2]
+pyth n 	= take n pyth'
