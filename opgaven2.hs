@@ -113,10 +113,55 @@ delers	n 	= delers' 2 n
 isPriem :: Number -> Bool
 isPriem n = length ( delers n)  == 1 
 
---4a
+--4a&b
 
 pyth :: Number -> [(Number, Number, Number)]
 --pyth' ::  [(Number,Number,Number)]
 
 pyth'	= [(a,b,c) | c <- [1..], b <-[1..c], a <- [1..b], a^2 + b^2 == c^2]
 pyth n 	= take n pyth'
+
+-- 5.a
+stijgend :: [Number] -> Bool
+stijgend [] 	= True
+stijgend [x]	= True
+stijgend (x:xs)	= (x < (head xs)) && stijgend xs
+
+--5b
+zwakStijgend' :: Number -> Number -> [Number] -> Bool
+zwakStijgend' gem n []		= True
+zwakStijgend' gem n (x:xs)	= (gem < x) &&  ( zwakStijgend' ((gem*(n/(n+1))) + (x/n))  (n+1)  xs )
+
+zwakStijgend :: [Number] -> Bool
+zwakStijgend [] 	= True
+zwakStijgend xs		= zwakStijgend' 0 1 xs
+
+--6a
+
+ 
+sublijst :: Eq a => [a] -> [a] -> Bool
+--sublijst [] []		= True
+--sublijst xs []		= False
+--sublijst [] ys		= True
+sublijst xs ys		| length ys >= length xs	= (take (length xs) ys == xs ) || sublijst xs (tail ys)
+					| otherwise					= False
+
+--6b
+deellijst :: Eq a => [a] -> [a] -> Bool
+deellijst [] ys	= True
+deellijst xs [] = False
+deellijst (x:xs) ys | x == (head ys) 	= deellijst xs (tail ys)
+					| otherwise			= deellijst (x:xs) (tail ys)
+--7
+{--}
+bubble2 :: Ord a => [a] -> [a] -> [a]
+bubble2 sorted (unsorted:[])	= sorted ++ [unsorted]
+bubble2 sorted (u:n:unsorted)	| u < n 	= bubble2 (sorted ++ [u]) (n : unsorted)
+								| otherwise = bubble2 (sorted ++ [n]) (u : unsorted)
+
+
+bsort2 :: Ord a => [a] -> [a]
+bsort2 xs	| xs == (bubble2 [] xs)	= xs
+			| otherwise				= bsort2 ( bubble2 [] xs)
+			
+
