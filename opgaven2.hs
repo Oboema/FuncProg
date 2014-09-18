@@ -165,7 +165,7 @@ bsort2 :: Ord a => [a] -> [a]
 bsort2 xs	| xs == (bubble2 [] xs)	= xs
 			| otherwise				= bsort2 ( bubble2 [] xs)
 			
-
+--8
 mmsort ::  Ord a => [a] -> [a]
 mmsort []	= []
 mmsort [x]  = [x]
@@ -173,9 +173,46 @@ mmsort xs	= mi : (mmsort (xs Data.List.\\ [mi,ma])) ++ [ma]
 	where
 		mi = minimum xs
 		ma = maximum xs
-
+--9
 isort :: Ord a => [a] -> [a] -> [a]
 isort [] ys			= ys
 isort (x:xs)  [] 	= isort xs [x]
-isort (x:xs) (y:ys)	| x < y 	= isort xs (x:y:ys)
+isort (x:xs) (y:ys)	| x <= y 	= isort xs (x:y:ys)
 					| otherwise = isort xs (y: ( isort [x] ys))
+
+--10
+merge :: Ord a => [a] -> [a] -> [a]
+merge xs []	= xs
+merge [] ys = ys
+merge (x:xs) (y:ys)	| x <= y 	= merge xs (x:y:ys)
+					| otherwise = merge xs (y: (merge [x] ys))
+
+msort :: (Show a, Ord a) => [a] -> [a]
+
+msort []	= []
+msort [x]	= [x]
+msort xs 	= merge (msort(traceShow lhalf lhalf)) (msort(traceShow rhalf rhalf))
+	where
+		l 				= round ((length xs)/2)
+		split xs		= [take l xs, drop l xs]
+		(lhalf,rhalf)	= (take l xs, drop l xs)
+
+--11
+ts :: Show a => [a] -> [a]
+ts thing	= traceShow thing thing
+
+t :: Show a => String -> a -> a
+t str thing	= trace (str ++ (show thing)) thing
+
+qsort :: (Show a, Ord a) => [a] -> [a]
+qsort []		= []
+--qsort [x]		= [x]
+qsort (x:xs)	= (qsort less) ++ [x] ++ (qsort more)
+	--(qsort (t "less" less)) ++ [x] ++ (qsort (t "more" more))
+
+	--(qsort less) ++ (qsort equal) ++ (qsort more)
+	--(qsort (t "less" less)) ++ (qsort (t "eq" equal)) ++ (qsort (t "more" more))
+	where
+		less	= filter (<=x)  xs
+		--equal	= x: ( filter (==x) xs)
+		more	= filter (>x)  xs
