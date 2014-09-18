@@ -6,6 +6,7 @@ import qualified Data.List -- only using this for sortBy, gives namespace errors
 
 --opgave 1
 a = [1..10]
+rand = [1,5,8,09,6,34,2,43,5,7,6,4,2,2,456,788,53,2,234,2,6,8]
 
 myfilter :: ( a -> Bool ) -> [a] -> [a]
 myfilter f xs	= [ k | k <- xs, f k]
@@ -165,3 +166,16 @@ bsort2 xs	| xs == (bubble2 [] xs)	= xs
 			| otherwise				= bsort2 ( bubble2 [] xs)
 			
 
+mmsort ::  Ord a => [a] -> [a]
+mmsort []	= []
+mmsort [x]  = [x]
+mmsort xs	= mi : (mmsort (xs Data.List.\\ [mi,ma])) ++ [ma]
+	where
+		mi = minimum xs
+		ma = maximum xs
+
+isort :: Ord a => [a] -> [a] -> [a]
+isort [] ys			= ys
+isort (x:xs)  [] 	= isort xs [x]
+isort (x:xs) (y:ys)	| x < y 	= isort xs (x:y:ys)
+					| otherwise = isort xs (y: ( isort [x] ys))
