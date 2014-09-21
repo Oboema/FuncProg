@@ -12,7 +12,7 @@ myfilter :: ( a -> Bool ) -> [a] -> [a]
 myfilter f xs	= [ k | k <- xs, f k]
 
 
-myfoldl :: ( a -> a -> a ) -> a -> [a] -> a
+--myfoldl :: ( a -> a -> a ) -> a -> [a] -> a
 myfoldl f z []		= z
 myfoldl f z (x:xs)	= myfoldl f (f z x) xs
 
@@ -99,8 +99,20 @@ sorteerPersonen []		= []
 sorteerPersonen xs		= Data.List.sortBy comperson xs 
 
 --3.a
---zeef :: [Number] -> [Number]
---zeef (x:xs)	= x 
+geenzeef ::  [Number] -> [Number]
+
+geenzeef (x:xs)		= x : geenzeef ( [ k | k <- xs , (k `mod` x) /= 0])
+
+ispriem :: Number -> Bool
+ispriem n = any (n==) (take n $ geenzeef [2..])
+
+
+priemen :: Number -> [Number]
+priemen n 	= take n (geenzeef [2..])
+
+kleinerpriemen :: Number -> [Number]
+kleinerpriemen n 	= takeWhile (< n) (geenzeef [2..])
+
 
 --3.b eigenlijk priemfac, superinefficient maarja
 delers' :: Number -> Number -> [Number]
@@ -112,7 +124,7 @@ delers :: Number -> [Number]
 delers	n 	= delers' 2 n
 
 isPriem :: Number -> Bool
-isPriem n = length ( delers n)  == 1 
+isPriem n = [n] == delers n --  want lazy eval length ( delers n)  == 1 
 
 --4a&b
 
@@ -126,7 +138,7 @@ pyth n 	= take n pyth'
 stijgend :: [Number] -> Bool
 stijgend [] 	= True
 stijgend [x]	= True
-stijgend (x:xs)	= (x < (head xs)) && stijgend xs
+stijgend (x:y:xs)	= (x < y) && stijgend (y:xs)
 
 --5b
 zwakStijgend' :: Number -> Number -> [Number] -> Bool
@@ -139,7 +151,7 @@ zwakStijgend xs		= zwakStijgend' 0 1 xs
 
 --6a
 
- 
+-- length ys moet weg anders kan je niet oneindige lijst vergelijken
 sublijst :: Eq a => [a] -> [a] -> Bool
 --sublijst [] []		= True
 --sublijst xs []		= False

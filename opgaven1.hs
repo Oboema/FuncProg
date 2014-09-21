@@ -100,7 +100,7 @@ myzip (x:xs) (y:ys) = (x,y) : myzip xs ys
 
 -- Opgave 7
 r :: Number -> Number -> [Number]
-r start offset = [start] ++ r (start+offset) offset
+r start offset = start : r (start+offset) offset
 
 r1 :: Number -> [Number] -> Number
 
@@ -124,7 +124,7 @@ isRR (x:xs) = mytake (mylength (x:xs)) ( r x ( (head xs) - x) ) == (x : xs)
 mRowsEqual :: [[Number]] -> Bool
 mRowsEqual []			= True
 mRowsEqual (xs:[]) 		= True
-mRowsEqual ((xs):(xss))	= (mylength xs == mylength (head xss)) && mRowsEqual ( xss)
+mRowsEqual (xs:xss)		= (mylength xs == mylength (head xss)) && mRowsEqual ( xss)
 	--"len xs = "++show (mylength xs) ++", len head xss = "++show (mylength (head xss)) ++ ", tail: " ++ show (tail xss) ++ ", rest: " ++ mRowsEqual (tail xss)
 	--
 
@@ -133,12 +133,13 @@ mRowSums []			= error "No sums of the empty list"
 mRowSums (xs:[])	= [mysum xs] --"mysum xs = "++show (mysum xs)++" SLC "
 mRowSums (xs:yss)   = [mysum xs] ++ mRowSums yss --"mysum xs = "++show (mysum xs)++" : " ++ mRowSums yss
 
+{-}
 mTranspose :: [[Number]] -> [[Number]]
 mTranspose xss | trace (" mTranspose " ++ show xss) False = undefined 
 mTranspose [] 				= []
 mTranspose ([] : xss)		= mTranspose xss
 mTranspose ((x:xs) : xss)	= (x : [h | (h:_) <- xss]) : mTranspose (xs : [ t | (_:t) <- xss])
-
+-}
 mTp2 :: [[Number]] -> [[Number]]
 
 mTp2 []			= []
@@ -146,4 +147,4 @@ mTp2 ([]:xss)	= mTp2 xss
 mTp2 (xss)		= map head xss : mTp2  (map tail xss) -- (trace (" map tail xss: " ++ show (map tail xss))  (mTp2  (map tail xss))  )
 
 mColSums :: [[Number]] -> [Number]
-mColSums m 	= mRowSums ( mTp2 m)
+mColSums  	= mRowSums . mTp2  
