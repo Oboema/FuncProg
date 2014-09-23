@@ -16,13 +16,32 @@ data Tree1a = Leaf1a Number | Node1a Number Tree1a Tree1a
 	deriving Show
 
 t1a = Node1a 7 
-		(Leaf1a 4)
+		(Node1a 4
+			(Node1a 91
+				(Leaf1a 37)
+				(Leaf1a 13)
+			)
+			(Leaf1a 14)
+
+		)
 		(Node1a 8
 			(Node1a 44
 				(Leaf1a 4)
-				(Leaf1a 20)
+				(Node1a 20
+					(Node1a 55
+						(Leaf1a 44)
+						(Leaf1a 21)
+					)
+					(Leaf1a 17)
+				)
 			)
-			(Leaf1a 39)
+			(Node1a 39
+				(Leaf1a 18)
+				(Node1a 29
+					(Leaf1a 9)
+					(Leaf1a 12)
+				)
+			)
 		)
 
 --1a
@@ -44,6 +63,7 @@ t1b = Node1b (7,3)
 			)
 			(Leaf1b (22,39))
 		)
+
 
 pp1b :: Tree1b -> RoseTree
 
@@ -206,4 +226,69 @@ totDiepte d (Node1a n t1 t2)    = Node1a n (totDiepte (d-1) t1) (totDiepte (d-1)
 --showTreeList [ pp1a t1a, pp1a (totDiepte 1 t1a),pp1a (totDiepte 2 t1a),pp1a (totDiepte 3 t1a),pp1a (totDiepte 5 t1a)]
 
 --7a
+
+-- Hoe match ik op Node1a en Leaf1a tegelijk? misschien kan het want ik wil toch alleen n
+-- Lijkt er op dat ik veel te veel defs heb, kan dit korter?
+vervang :: Tree1a -> String -> Number -> Tree1a
+vervang (Node1a n t1 t2) pad k 	| pad == "" 	= Node1a k t1 t2
+vervang (Leaf1a n) pad k 		| pad == "" 	= Leaf1a k
+vervang (Leaf1a n) pad k 		| pad /= "" 	= error $ "path too long, at leaf with path "++pad
+
+vervang (Node1a n t1 t2) pad k 	| (head pad) == 'l' = Node1a n (vervang t1 (tail pad) k) t2
+vervang (Node1a n t1 t2) pad k 	| (head pad) == 'r' = Node1a n t1 $ vervang t2 (tail pad) k
+vervang tree pad k 				= error $ "some error occured, maybe your path \""++pad++"\" is illegal? Only 'l' and 'r' are allowed"
+-- showTreeList [ pp1a t1a, pp1a (vervang  t1a "l" 1337), pp1a (vervang  t1a "r" 1337), pp1a (vervang  t1a "rlr" 1337)]
+
+--7b
+subboom :: Tree1a -> String -> Tree1a
+subboom (Node1a n t1 t2) pad  	| pad == "" 	= Node1a n t1 t2
+subboom (Leaf1a n) pad  		| pad == "" 	= Leaf1a n
+subboom (Leaf1a n) pad  		| pad /= "" 	= error $ "path too long, at leaf with path "++pad
+
+subboom (Node1a n t1 t2) pad  	| (head pad) == 'l' = subboom t1 (tail pad)
+subboom (Node1a n t1 t2) pad  	| (head pad) == 'r' = subboom t2 (tail pad) 
+subboom tree pad  				= error $ "some error occured, maybe your path \""++pad++"\" is illegal? Only 'l' and 'r' are allowed"
+--  showTreeList [ pp1a t1a, pp1a (subboom  t1a "l" ), pp1a (subboom  t1a "r"), pp1a (subboom t1a "rlr" )]
+
+
+--7c
+--linkerbuur :: Tree1a -> String -> RoseTree
+--linkerbuur tree pad		| subboom tree pad 	== (Leaf1a 1) && subboom (init pad) == Leaf1a = pp1a t1a
+
+--8
+branchlen :: (Int -> Int -> Int) -> Tree1c -> Int
+branchlen op (Node1c n t1 t2) 	= op (1 + (branchlen op t1)) (1 + (branchlen op t2))
+branchlen op Leaf1c				= 0
+
+branchmin	= branchlen min
+branchmax   = branchlen max
+
+
+
+test :: Tree1c -> Bool
+test tree 	= ( (branchmax tree) - (branchmin tree) ) <= 1
+
+zipLists :: [a] -> [a] -> [a]
+zipLists [] [] 		= []
+zipLists [] (x:xs)	= x : zipLists [] xs
+zipLists (x:xs) []  = x : zipLists [] xs
+zipLists (x:xs) (y:ys)	= x:y:(zipLists xs ys)
+
+divlist xs = (take half xs, drop half xs)
+	where half 		= floor  $ (length xs)/2 
+--8
+
+balanceer :: Tree1c -> Tree1c
+balanceer Leaf1c 			= Leaf1c
+balanceer (Node1c n t1 t2)	= (Node1c n (balanceer (makeTree fsthalf))  (balanceer (makeTree sndhalf)) )
+		where
+			remaining			= (makeList t1) ++ (makeList t2)
+			(fsthalf,sndhalf)	= divlist remaining
+
+
+
+testy f  = f blar h
+			where
+				h = 3
+				blar = h + 3
 
