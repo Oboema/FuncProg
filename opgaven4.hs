@@ -59,10 +59,11 @@ data Nummer  = G --How do I avoid writing One | Two | etc?
     deriving Show
 
 data Expr       = Nummer 
-                | LParens Expr Op Expr RParens
+                | Parens Expr Op Expr Parens
 
 data MyParseTree    = Bintree Op Nummer
 
 
-parseSimple -> String -> MyParseTree
-parseSimple (x:xs)  | Expr x 
+parseSimple :: String -> MyParseTree
+parseSimple ('(':xs)        = parseSimple xs
+parseSimple ((Nummer n):xs) = Node(parseSimple xs) (Leaf n) ( parseSimple xs
