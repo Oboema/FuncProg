@@ -2,7 +2,7 @@ import FPPrac
 import Debug.Trace
 import Data.Char
 import qualified Data.List -- only using this for sortBy, gives namespace errors with fpprac for many other useful functions
-import RoseTree
+import FPPrac.Trees.RoseTree
 
 import qualified Prelude
 
